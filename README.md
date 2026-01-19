@@ -7,17 +7,17 @@ An open-source, distributed event streaming platform designed to handle **millio
 ```mermaid
 flowchart LR
   P[Producers] -->|HTTPS + JWT| API[FastAPI Ingestion API]
-  API -->|XADD (partitioned)| RS[(Redis Streams)]
+  API -->|XADD (partitioned)| RS[Redis Streams]
   RS -->|XREADGROUP| C[Consumers / Workers]
   RS -->|XREAD (persist cursor)| PER[Persister Service]
-  PER --> PG[(PostgreSQL Event Store)]
+  PER --> PG[PostgreSQL Event Store]
   API --> M[Prometheus /metrics]
   RS --> MX[Metrics Collector]
   C -->|OTel spans| OT[OpenTelemetry Collector]
   API -->|OTel spans| OT
-  OT --> TR[(Jaeger/Tempo/ELK optional)]
-  M --> PR[(Prometheus)]
-  PR --> G[(Grafana)]
+  OT --> TR[Jaeger/Tempo/ELK optional]
+  M --> PR[Prometheus]
+  PR --> G[Grafana]
   UI[Vue Dashboard] --> API
   UI --> G
 ```
@@ -256,16 +256,4 @@ curl -sS -X POST "http://localhost:8000/v1/topics/orders/groups/orders-workers/r
   - partition stream lengths
   - consumer group pending + lag (from Redis `XINFO GROUPS`)
 - Prometheus scrapes `GET /metrics/` (no auth) and Grafana visualizes trends.
-
-## Tech stack recommendation
-
-- **Backend**: Python FastAPI, Redis Streams, PostgreSQL
-- **Frontend**: Vue.js
-- **Metrics**: Prometheus + Grafana
-- **Tracing/logging**: OpenTelemetry (collector) + Jaeger/Tempo/ELK (optional)
-- **Containerization**: Docker Compose; optional Kubernetes with Redis HA + HPA
-
-## Resume bullet (example)
-
-- Designed and implemented a fully open-source **distributed event streaming platform** (FastAPI + Redis Streams + Postgres) delivering **partition-ordered, replayable logs** with **fault-tolerant ingestion**, consumer-group parallelism, backpressure controls, and **real-time observability** via Prometheus/Grafana and OpenTelemetry—processing **millions of events/day** without paid messaging services.
 
