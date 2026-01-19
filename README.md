@@ -7,15 +7,15 @@ An open-source, distributed event streaming platform designed to handle **millio
 ```mermaid
 flowchart LR
   P[Producers] -->|HTTPS + JWT| API[FastAPI Ingestion API]
-  API -->|XADD (partitioned)| RS[Redis Streams]
-  RS -->|XREADGROUP| C[Consumers / Workers]
-  RS -->|XREAD (persist cursor)| PER[Persister Service]
+  API -->|XADD - partitioned| RS[Redis Streams]
+  RS -->|XREADGROUP| C[Consumers and Workers]
+  RS -->|XREAD - persist cursor| PER[Persister Service]
   PER --> PG[PostgreSQL Event Store]
-  API --> M[Prometheus /metrics]
+  API --> M[Prometheus metrics]
   RS --> MX[Metrics Collector]
   C -->|OTel spans| OT[OpenTelemetry Collector]
   API -->|OTel spans| OT
-  OT --> TR[Jaeger/Tempo/ELK optional]
+  OT --> TR[Jaeger Tempo ELK]
   M --> PR[Prometheus]
   PR --> G[Grafana]
   UI[Vue Dashboard] --> API
